@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 function Header() {
   return (
@@ -6,10 +7,10 @@ function Header() {
       <h1>GameHub</h1>
       <nav>
         <ul>
-          <li><a href="#">Inicio</a></li>
-          <li><a href="#">Iniciar sesión</a></li>
-          <li><a href="#">Acerca de</a></li>
-          <li><a href="#">Contacto</a></li>
+          <li><Link to="/">Inicio</Link></li>
+          <li><Link to="/login">Iniciar sesión</Link></li>
+          <li><Link to="/acerca">Acerca de</Link></li>
+          <li><Link to="/contacto">Contacto</Link></li>
         </ul>
       </nav>
     </header>
