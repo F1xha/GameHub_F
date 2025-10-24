@@ -1,33 +1,29 @@
-import { login, registerUser, getCurrentUser, isAuthenticated, logout } from '../src/utils/auth';
+import { registrar, login, logout, isAutenticado, getUsuario } from '../src/utils/auth';
 
-describe('Auth (localStorage)', () => {
-  beforeEach(() => {
-    localStorage.clear();
-  });
+describe('Auth simple (localStorage)', () => {
+  beforeEach(() => localStorage.clear());
 
   it('registra y auto-inicia sesión', () => {
-    const res = registerUser({ name: 'Ana', email: 'ana@example.com', password: '1234' });
-    expect(res.ok).toBeTrue();
-    expect(isAuthenticated()).toBeTrue();
-    expect(getCurrentUser().email).toBe('ana@example.com');
+    const r = registrar('Bryan', 'bryan@test.com', '1234');
+    expect(r.ok).toBeTrue();
+    expect(isAutenticado()).toBeTrue();
+    expect(getUsuario().email).toBe('bryan@test.com');
   });
 
-  it('evita registrar un correo duplicado', () => {
-    registerUser({ name: 'Ana', email: 'ana@example.com', password: '1234' });
-    const dup = registerUser({ name: 'Ana2', email: 'ana@example.com', password: 'xx' });
-    expect(dup.ok).toBeFalse();
+  it('evita duplicado por email', () => {
+    registrar('Bryan', 'bryan@test.com', '1234');
+    const r2 = registrar('Otro', 'bryan@test.com', 'xxxx');
+    expect(r2.ok).toBeFalse();
   });
 
-  it('inicia sesión con credenciales válidas', () => {
-    registerUser({ name: 'Ana', email: 'ana@example.com', password: '1234' });
+  it('login válido/invalid', () => {
+    registrar('Bryan', 'bryan@test.com', '1234');
     logout();
-    const res = login({ email: 'ana@example.com', password: '1234' });
-    expect(res.ok).toBeTrue();
-    expect(getCurrentUser().name).toBe('Ana');
-  });
+    const ok = login('bryan@test.com', '1234');
+    expect(ok.ok).toBeTrue();
 
-  it('falla con credenciales inválidas', () => {
-    const res = login({ email: 'x@example.com', password: 'bad' });
-    expect(res.ok).toBeFalse();
+    logout();
+    const bad = login('bryan@test.com', 'wrong');
+    expect(bad.ok).toBeFalse();
   });
 });

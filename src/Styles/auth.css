@@ -1,0 +1,48 @@
+/* Contenedor */
+.auth-simple {
+  display: grid;
+  gap: 16px;
+}
+
+/* Tarjetas (login / registro) */
+.auth-box {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  padding: 14px;
+}
+
+/* Inputs y botón */
+.auth-input {
+  width: 100%;
+  padding: 8px 10px;
+  margin: 8px 0;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background: #0f0f0f;
+  color: #fff;
+}
+
+.auth-btn {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  background: #00bfff;
+  color: #fff;
+  cursor: pointer;
+}
+
+.auth-error {
+  color: #ff6969;
+  background: #2b1111;
+  border: 1px solid #4a1f1f;
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin: 6px 0;
+}
+
+/* En pantallas grandes, dos columnas */
+@media (min-width: 900px) {
+  .auth-simple { grid-template-columns: 1fr 1fr; }
+}

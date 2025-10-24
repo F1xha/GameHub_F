@@ -1,23 +1,27 @@
+// src/pages/Perfil.js
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useFavs } from '../utils/favs';
-import juegos from '../data/juegos';
 import Card from '../components/Card';
-import { isAuthenticated, getCurrentUser, login, registerUser, logout } from '../utils/auth';
+import juegos from '../data/juegos';
+import { useFavs } from '../utils/favs';
+import '../styles/auth.css';
+import { isAuthenticated as isAutenticado, getCurrentUser as getUsuario, login, registerUser as registrar, logout } from '../utils/auth';
 
 export default function Perfil(){
-  const [auth, setAuth] = useState(() => ({ logged: isAuthenticated(), user: getCurrentUser() }));
-  const { favs, toggleFav, clearFavs, isFav } = useFavs();
-
-  const favoritos = useMemo(() => juegos.filter(j => favs.includes(j.id)), [favs]);
-
-  const [formLogin, setFormLogin] = useState({ email: '', password: '' });
-  const [formReg, setFormReg] = useState({ name: '', email: '', password: '' });
+  // estado de auth muy simple
+  const [auth, setAuth] = useState(() => ({ logged: isAutenticado(), user: getUsuario() }));
   const [error, setError] = useState('');
+
+  // forms controlados mínimos
+  const [formLogin, setFormLogin] = useState({ email: '', password: '' });
+  const [formReg, setFormReg] = useState({ nombre: '', email: '', password: '' });
+
+  const { favs, isFav, toggleFav, clearFavs } = useFavs();
+  const favoritos = useMemo(() => juegos.filter(j => favs.includes(j.id)), [favs]);
 
   const handleLogin = (e) => {
     e.preventDefault();
-    const res = login(formLogin);
+    const res = login(formLogin.email, formLogin.password);
     if (!res.ok) return setError(res.error);
     setError('');
     setAuth({ logged: true, user: res.user });
@@ -25,8 +29,8 @@ export default function Perfil(){
 
   const handleRegister = (e) => {
     e.preventDefault();
-    if (!formReg.name.trim()) return setError('Ingresa tu nombre');
-    const res = registerUser(formReg);
+    if (!formReg.nombre.trim()) return setError('Ingresa tu nombre');
+    const res = registrar(formReg.nombre, formReg.email, formReg.password);
     if (!res.ok) return setError(res.error);
     setError('');
     setAuth({ logged: true, user: res.user });
@@ -37,80 +41,82 @@ export default function Perfil(){
     setAuth({ logged: false, user: null });
   };
 
+  // Vista no autenticado: login + registro
   if (!auth.logged) {
     return (
-      <div>
-        <h1>Mi Perfil</h1>
-        <p>Inicia sesión o regístrate para guardar y ver tus favoritos.</p>
-        {error && <p style={{color:'#ff6666'}} data-testid="auth-error">{error}</p>}
+<div>
+  <h1>Mi Perfil</h1>
+  <p>Inicia sesión o regístrate. (Se guarda en tu navegador con localStorage)</p>
+  {error && <div className="auth-error" data-testid="auth-error">{error}</div>}
 
-        <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:24}}>
-          {/* Login */}
-          <form onSubmit={handleLogin} data-testid="form-login" style={{background:'#1b1b1b', padding:16, borderRadius:12, border:'1px solid #333'}}>
-            <h2>Iniciar Sesión</h2>
-            <label>Email</label>
-            <input
-              data-testid="login-email"
-              type="email"
-              value={formLogin.email}
-              onChange={e=>setFormLogin({...formLogin, email: e.target.value})}
-              required
-              style={{width:'100%', marginBottom:10}}
-            />
-            <label>Contraseña</label>
-            <input
-              data-testid="login-password"
-              type="password"
-              value={formLogin.password}
-              onChange={e=>setFormLogin({...formLogin, password: e.target.value})}
-              required
-              style={{width:'100%', marginBottom:10}}
-            />
-            <button data-testid="login-submit" type="submit" style={{background:'#00bfff', color:'#fff', border:'none', padding:'8px 12px', borderRadius:8, cursor:'pointer'}}>Entrar</button>
-          </form>
+  <div className="auth-simple">
+    {/* Login */}
+    <form onSubmit={handleLogin} data-testid="form-login" className="auth-box">
+      <h2 style={{marginTop:0}}>Iniciar Sesión</h2>
+      <input
+        className="auth-input"
+        placeholder="Correo electrónico"
+        data-testid="login-email"
+        type="email"
+        value={formLogin.email}
+        onChange={e=>setFormLogin({...formLogin, email: e.target.value})}
+        required
+      />
+      <input
+        className="auth-input"
+        placeholder="Contraseña"
+        data-testid="login-password"
+        type="password"
+        value={formLogin.password}
+        onChange={e=>setFormLogin({...formLogin, password: e.target.value})}
+        required
+      />
+      <button className="auth-btn" data-testid="login-submit" type="submit">Entrar</button>
+    </form>
 
-          {/* Registro */}
-          <form onSubmit={handleRegister} data-testid="form-register" style={{background:'#1b1b1b', padding:16, borderRadius:12, border:'1px solid #333'}}>
-            <h2>Registrarse</h2>
-            <label>Nombre</label>
-            <input
-              data-testid="reg-name"
-              type="text"
-              value={formReg.name}
-              onChange={e=>setFormReg({...formReg, name: e.target.value})}
-              required
-              style={{width:'100%', marginBottom:10}}
-            />
-            <label>Email</label>
-            <input
-              data-testid="reg-email"
-              type="email"
-              value={formReg.email}
-              onChange={e=>setFormReg({...formReg, email: e.target.value})}
-              required
-              style={{width:'100%', marginBottom:10}}
-            />
-            <label>Contraseña</label>
-            <input
-              data-testid="reg-password"
-              type="password"
-              value={formReg.password}
-              onChange={e=>setFormReg({...formReg, password: e.target.value})}
-              required
-              style={{width:'100%', marginBottom:10}}
-            />
-            <button data-testid="reg-submit" type="submit" style={{background:'#00bfff', color:'#fff', border:'none', padding:'8px 12px', borderRadius:8, cursor:'pointer'}}>Crear cuenta</button>
-          </form>
-        </div>
-      </div>
+    {/* Registro */}
+    <form onSubmit={handleRegister} data-testid="form-register" className="auth-box">
+      <h2 style={{marginTop:0}}>Registrarse</h2>
+      <input
+        className="auth-input"
+        placeholder="Nombre"
+        data-testid="reg-nombre"
+        type="text"
+        value={formReg.nombre}
+        onChange={e=>setFormReg({...formReg, nombre: e.target.value})}
+        required
+      />
+      <input
+        className="auth-input"
+        placeholder="Correo electrónico"
+        data-testid="reg-email"
+        type="email"
+        value={formReg.email}
+        onChange={e=>setFormReg({...formReg, email: e.target.value})}
+        required
+      />
+      <input
+        className="auth-input"
+        placeholder="Contraseña"
+        data-testid="reg-password"
+        type="password"
+        value={formReg.password}
+        onChange={e=>setFormReg({...formReg, password: e.target.value})}
+        required
+      />
+      <button className="auth-btn" data-testid="reg-submit" type="submit">Crear cuenta</button>
+    </form>
+  </div>
+</div>
+
     );
   }
 
-  // Vista autenticado
+  // Vista autenticado: datos y favoritos
   return (
     <div>
       <h1>Mi Perfil</h1>
-      <p><strong>Nombre:</strong> {auth.user?.name}</p>
+      <p><strong>Nombre:</strong> {auth.user?.nombre}</p>
       <p><strong>Email:</strong> {auth.user?.email}</p>
       <button onClick={handleLogout} data-testid="logout-btn" style={{background:'#1b1b1b', color:'#fff', border:'1px solid #333', padding:'6px 10px', borderRadius:8, cursor:'pointer'}}>Cerrar sesión</button>
 
