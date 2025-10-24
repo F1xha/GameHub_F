@@ -1,66 +1,37 @@
+// karma.conf.js
+const path = require('path');
+
 module.exports = function(config) {
   config.set({
-    // base path that will be used to resolve all patterns (eg. files, exclude)
-    basePath: '',
-
-    // frameworks to use
     frameworks: ['jasmine'],
-
-    // list of files / patterns to load in the browser
-    files: [
-      'tests/**/*.spec.js'
-    ],
-
-    // list of files / patterns to exclude
-    exclude: [],
-
-    // preprocess matching files before serving them to the browser
+    files: ['tests/**/*.spec.js'],
     preprocessors: {
-      'tests/**/*.spec.js': ['webpack', 'sourcemap']
+      'tests/**/*.spec.js': ['webpack']
     },
-
     webpack: {
       mode: 'development',
-      devtool: 'inline-source-map',
       module: {
         rules: [
           {
-            test: /\.js$/,
+            test: /\.jsx?$/,
             exclude: /node_modules/,
             use: {
               loader: 'babel-loader',
               options: {
-                presets: ['@babel/preset-env']
+                presets: [
+                  ['@babel/preset-env', { targets: { chrome: '100' } }],
+                  ['@babel/preset-react', {}]
+                ]
               }
             }
-          }
+          },
+          { test: /\.css$/, use: ['style-loader', 'css-loader'] }
         ]
-      }
+      },
+      resolve: { extensions: ['.js'] }
     },
-
-    // test results reporter to use
     reporters: ['progress'],
-
-    // web server port
-    port: 9876,
-
-    // enable / disable colors in the output (reporters and logs)
-    colors: true,
-
-    // level of logging
-    logLevel: config.LOG_INFO,
-
-    // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: true,
-
-    // start these browsers
-    browsers: ['Chrome'],
-
-    // Continuous Integration mode
-    // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false,
-
-    // Concurrency level
-    concurrency: Infinity
-  })
-}
+    browsers: ['ChromeHeadless'],
+    singleRun: true
+  });
+};
