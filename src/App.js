@@ -1,14 +1,14 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import './styles/global.css';
 import Navbar from './components/Navbar';
+import './styles/global.css';
 
 import Inicio from './pages/Inicio';
 import Catalogo from './pages/Catalogo';
+import DetalleJuego from './pages/DetalleJuego';
 import SobreNosotros from './pages/SobreNosotros';
 import Contacto from './pages/Contacto';
 import Perfil from './pages/Perfil';
-import DetalleJuego from './pages/DetalleJuego';
 
 export default function App() {
   return (

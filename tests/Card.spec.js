@@ -1,18 +1,35 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import Card from '../components/Card';
+import ReactDOM from 'react-dom';
+import Card from '../src/components/Card';
 
-describe('Card component', () => {
-  it('muestra el título y children', () => {
-    render(<Card title="Test">Contenido de prueba</Card>);
-    expect(screen.getByText('Test')).toBeInTheDocument();
-    expect(screen.getByText('Contenido de prueba')).toBeInTheDocument();
+describe('Card component (Jasmine)', () => {
+  let container;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
   });
 
-  it('si se hace clic llama al onClick', () => {
-    const fn = jest.fn();
-    render(<Card title="Click" onClick={fn}>X</Card>);
-    fireEvent.click(screen.getByRole('article'));
-    expect(fn).toHaveBeenCalled();
+  afterEach(() => {
+    ReactDOM.unmountComponentAtNode(container);
+    container.remove();
+    container = null;
+  });
+
+  it('renderiza el título y el contenido', () => {
+    ReactDOM.render(<Card title="Juego Alpha">Contenido</Card>, container);
+    const title = container.querySelector('h3');
+    expect(title).not.toBeNull();
+    expect(title.textContent).toBe('Juego Alpha');
+    expect(container.textContent).toContain('Contenido');
+  });
+
+  it('dispara onClick cuando se hace click en la tarjeta', () => {
+    const onClick = jasmine.createSpy('onClick');
+    ReactDOM.render(<Card title="Click" onClick={onClick}>X</Card>, container);
+    const article = container.querySelector('.card');
+    expect(article).not.toBeNull();
+    article.click();
+    expect(onClick).toHaveBeenCalled();
   });
 });

@@ -4,7 +4,6 @@ import '../styles/navbar.css';
 
 export default function Navbar() {
   const location = useLocation();
-
   const links = [
     { path: '/', label: 'Inicio' },
     { path: '/catalogo', label: 'Catálogo' },
