@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
+import './styles/global.css';
 import Navbar from './components/Navbar';
 
 import Inicio from './pages/Inicio';
@@ -10,11 +10,11 @@ import Contacto from './pages/Contacto';
 import Perfil from './pages/Perfil';
 import DetalleJuego from './pages/DetalleJuego';
 
-export default function App(){
+export default function App() {
   return (
     <Router>
       <Navbar />
-      <main style={{ padding:'1rem' }}>
+      <main style={{ padding: '1rem 2rem' }}>
         <Routes>
           <Route path="/" element={<Inicio />} />
           <Route path="/catalogo" element={<Catalogo />} />
