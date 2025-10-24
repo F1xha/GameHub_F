@@ -1,33 +1,37 @@
-/* styles/navbar.css */
-/* Navbar simple fijo arriba de la app */
+/* ========== NAVBAR OSCURO ========== */
+/* Barra de navegación superior (persistente en toda la app) */
 
 .navbar {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 12px 16px;
-  background: #0f0f0f;
-  border-bottom: 1px solid #222;
+  display: flex;                 /* organiza logo y links en fila */
+  align-items: center;           /* centra verticalmente */
+  gap: 16px;                     /* separación entre elementos */
+  padding: 12px 16px;            /* espacio interno */
+  background: #0f0f0f;           /* fondo oscuro principal */
+  border-bottom: 1px solid #222; /* línea divisoria sutil */
 }
 
 .navbar-logo {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1.1rem;             /* tamaño medio */
+  color: #eaeaea;                /* texto claro sobre fondo oscuro */
 }
 
 .navbar-links {
   display: flex;
   gap: 12px;
-  list-style: none;
+  list-style: none;              /* sin viñetas */
   padding: 0;
   margin: 0;
 }
 
+/* Enlaces del menú */
 .navbar a {
-  color: #ddd;
-  text-decoration: none;
+  color: #d8d8d8;                /* gris claro */
+  text-decoration: none;         /* sin subrayado */
 }
+
+/* Estado activo o hover */
 .navbar li.active a,
 .navbar a:hover {
-  color: #00bfff;
+  color: #00bfff;                /* azul brillante para resaltar */
 }

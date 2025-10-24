@@ -1,35 +1,46 @@
-/* styles/card.css */
-/* Estilos básicos de la tarjeta reutilizable */
+/* ========== CARD OSCURA ========== */
+/* Tarjetas reutilizables (juegos, favoritos, etc.) */
 
 .card {
-  border: 1px solid #2b2b2b;
-  border-radius: 10px;
-  overflow: hidden;
-  background: #111;
-  box-shadow: 0 2px 6px rgba(0,0,0,.2);
-  cursor: pointer;
+  border: 1px solid #2b2b2b;      /* borde gris oscuro */
+  border-radius: 10px;            /* esquinas redondeadas */
+  overflow: hidden;               /* oculta desbordes (img) */
+  background: #111;               /* fondo oscuro */
+  box-shadow: 0 2px 6px rgba(0,0,0,.25); /* sombra sutil */
+  cursor: pointer;                /* indica que se puede hacer click */
 }
 
+/* Imagen superior de la tarjeta */
 .card-image {
   width: 100%;
   display: block;
   height: 160px;
-  object-fit: cover;
+  object-fit: cover;              /* recorte proporcional */
 }
 
+/* Contenido interno de la tarjeta */
 .card-content {
   padding: 12px;
+  color: #f0f0f0;                 /* texto claro */
 }
 
+/* Sección opcional (children) */
 .card-children {
   margin-top: 6px;
+  color: #cfcfcf;                 /* texto secundario más tenue */
 }
 
+/* Botón de favorito (corazón) */
 .fav-btn {
-  background: transparent;
-  border: none;
-  font-size: 1.1rem;
+  background: transparent;        /* sin fondo */
+  border: none;                   /* sin borde */
+  font-size: 1.1rem;              /* tamaño medio */
   cursor: pointer;
   line-height: 1;
+  color: #ff7676;                 /* rojo suave */
 }
-.fav-btn:hover { transform: scale(1.05); }
+
+/* Animación al pasar el cursor */
+.fav-btn:hover {
+  transform: scale(1.05);         /* pequeño aumento */
+}

@@ -1,19 +1,50 @@
-body {
+/* ========== GLOBAL TEMA OSCURO ========== */
+/* Este archivo asegura que TODO el sitio mantenga el fondo oscuro
+   sin importar otros estilos o componentes. */
+
+html, body {
   margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background-color: #0f0f0f;
-  color: #fff;
+  padding: 0;
+  background-color: #0a0a0a !important; /* Fondo oscuro base */
+  color: #eaeaea !important;            /* Texto claro */
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  height: 100%;
 }
 
-h1, h2, h3 {
-  font-weight: 600;
+/* Quita el fondo blanco que React a veces aplica al <div id="root"> */
+#root {
+  background-color: #0a0a0a; /* Fondo igual al body */
+  min-height: 100vh;         /* Ocupa toda la pantalla */
 }
 
+/* ========== ELEMENTOS GENERALES ========== */
+
+/* Titulares claros y con buen contraste */
+h1, h2, h3, h4, h5 {
+  color: #ffffff;
+}
+
+/* Párrafos y texto normal */
+p, span, li {
+  color: #d8d8d8;
+}
+
+/* Acento azul para enlaces */
 a {
-  color: inherit;
-  text-decoration: none;
+  color: #00bfff;
+}
+a:hover {
+  color: #66d9ff;
 }
 
-main {
-  min-height: 90vh;
+/* Botones base, por si algún componente no tiene estilo */
+button {
+  background-color: #1e1e1e;
+  color: #f2f2f2;
+  border: 1px solid #333;
+  border-radius: 6px;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #2a2a2a;
 }
