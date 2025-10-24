@@ -1,25 +1,45 @@
-// src/pages/DetalleJuego.js
+// pages/DetalleJuego.js
+// Ficha completa de un juego según el :id de la URL
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import juegos from '../data/juegos';
+import { useFavs } from '../utils/favs';
 
 export default function DetalleJuego(){
   const { id } = useParams();
+  // Busca por id o por slug string
   const juego = juegos.find(j => j.id === id || String(j.id) === String(id));
+  const { isFav, toggleFav } = useFavs();
 
   if(!juego){
     return <p>Juego no encontrado. <Link to="/catalogo" style={{color:'#00bfff'}}>Volver</Link></p>;
   }
 
+  const fav = isFav(juego.id);
+
   return (
     <div>
       <Link to="/catalogo" style={{color:'#00bfff'}}>← Volver al catálogo</Link>
+
+      {/* Cabecera */}
       <header style={{textAlign:'center', margin:'12px 0 24px'}}>
         <h1>{juego.title}</h1>
         <img src={juego.images.cover} alt={juego.title} style={{ width:'70%', maxWidth:900, borderRadius:10 }}/>
+        {/* Botón favorito */}
+        <div style={{marginTop:12}}>
+          <button
+            className="fav-btn"
+            onClick={() => toggleFav(juego.id)}
+            style={{background:'#1b1b1b', color:'#fff', border:'1px solid #333', padding:'6px 10px', borderRadius:8, cursor:'pointer'}}
+          >
+            {fav ? '❤️ Quitar de favoritos' : '🤍 Agregar a favoritos'}
+          </button>
+        </div>
       </header>
 
+      {/* Layout 2 columnas: descripción + ficha */}
       <section style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:24}}>
+        {/* Columna izquierda */}
         <div>
           <h2>Descripción</h2>
           <p>{juego.description}</p>
@@ -32,6 +52,7 @@ export default function DetalleJuego(){
           </div>
         </div>
 
+        {/* Columna derecha (ficha) */}
         <aside>
           <h2>Ficha Técnica</h2>
           <ul style={{lineHeight:1.8}}>
@@ -50,19 +71,6 @@ export default function DetalleJuego(){
           <h3>Requisitos (orientativos PC)</h3>
           <p><strong>Mínimos:</strong> {juego.requirements.minimum}</p>
           <p><strong>Recomendados:</strong> {juego.requirements.recommended}</p>
-
-          <h3>Tiendas</h3>
-          <ul>
-            {juego.store?.steam && <li><a href={juego.store.steam} target="_blank" rel="noreferrer">Steam</a></li>}
-            {juego.store?.epic && <li><a href={juego.store.epic} target="_blank" rel="noreferrer">Epic</a></li>}
-            {juego.store?.gog && <li><a href={juego.store.gog} target="_blank" rel="noreferrer">GOG</a></li>}
-            {juego.store?.playstation && <li><a href={juego.store.playstation} target="_blank" rel="noreferrer">PlayStation</a></li>}
-            {juego.store?.xbox && <li><a href={juego.store.xbox} target="_blank" rel="noreferrer">Xbox</a></li>}
-            {juego.store?.switch && <li><a href={juego.store.switch} target="_blank" rel="noreferrer">Switch</a></li>}
-            {juego.store?.microsoft && <li><a href={juego.store.microsoft} target="_blank" rel="noreferrer">Microsoft Store</a></li>}
-            {juego.store?.riot && <li><a href={juego.store.riot} target="_blank" rel="noreferrer">Riot</a></li>}
-            {juego.store?.rockstar && <li><a href={juego.store.rockstar} target="_blank" rel="noreferrer">Rockstar</a></li>}
-          </ul>
         </aside>
       </section>
     </div>

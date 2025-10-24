@@ -1,3 +1,5 @@
+// Card.test.js (Jest)
+// Prueba de render y click del componente Card (componente reutilizable)
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';

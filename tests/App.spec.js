@@ -1,3 +1,5 @@
+// tests/App.spec.js (Jasmine + Karma)
+// Testea routing básico renderizando textos de páginas
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { MemoryRouter } from 'react-router-dom';
@@ -5,15 +7,8 @@ import App from '../src/App';
 
 describe('App routing (Jasmine)', () => {
   let container;
-  beforeEach(() => {
-    container = document.createElement('div');
-    document.body.appendChild(container);
-  });
-  afterEach(() => {
-    ReactDOM.unmountComponentAtNode(container);
-    container.remove();
-    container = null;
-  });
+  beforeEach(() => { container = document.createElement('div'); document.body.appendChild(container); });
+  afterEach(() => { ReactDOM.unmountComponentAtNode(container); container.remove(); container = null; });
 
   it('renderiza Inicio en "/"', () => {
     ReactDOM.render(

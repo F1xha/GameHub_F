@@ -1,18 +1,13 @@
+// tests/Card.spec.js (Jasmine + Karma)
+// Verifica render y onClick sin React Testing Library (DOM puro)
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Card from '../src/components/Card';
 
 describe('Card component (Jasmine)', () => {
   let container;
-  beforeEach(() => {
-    container = document.createElement('div');
-    document.body.appendChild(container);
-  });
-  afterEach(() => {
-    ReactDOM.unmountComponentAtNode(container);
-    container.remove();
-    container = null;
-  });
+  beforeEach(() => { container = document.createElement('div'); document.body.appendChild(container); });
+  afterEach(() => { ReactDOM.unmountComponentAtNode(container); container.remove(); container = null; });
 
   it('renderiza título y contenido', () => {
     ReactDOM.render(<Card title="Juego Alpha">Contenido</Card>, container);
