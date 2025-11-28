@@ -3,62 +3,65 @@ import { Link } from 'react-router-dom';
 import Card from '../components/Card';
 
 export default function Inicio() {
+  // Estados para manejar los juegos destacados, la carga y posibles errores
   const [destacados, setDestacados] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
 
-  // 🔑 REEMPLAZA ESTO CON TU CLAVE DE RAWG
+  // 🔑 CLAVE DE API (RAWG.io)
   const API_KEY = "6a3bd592aa9449448bb1f9a8ef8fd02f";
 
   useEffect(() => {
-    const fetchDestacados = async () => {
+    const obtenerDestacados = async () => {
       try {
-        // Pedimos 3 juegos ordenados por rating para la sección de destacados
-        const url = `https://api.rawg.io/api/games?key=${API_KEY}&page_size=3&ordering=-rating`;
-        const response = await fetch(url);
+        // Solicitamos a la API los 10 juegos mejor valorados (-rating)
+        const url = `https://api.rawg.io/api/games?key=${API_KEY}&page_size=10&ordering=-rating`;
+        const respuesta = await fetch(url);
         
-        if (!response.ok) {
-          throw new Error("Error al cargar destacados");
+        if (!respuesta.ok) {
+          throw new Error("Error al cargar los juegos destacados");
         }
 
-        const data = await response.json();
-        setDestacados(data.results);
+        const datos = await respuesta.json();
+        setDestacados(datos.results); // Guardamos los resultados en el estado
       } catch (err) {
         setError(err.message);
       } finally {
-        setLoading(false);
+        setCargando(false); // Terminamos la carga, haya éxito o error
       }
     };
 
-    fetchDestacados();
+    obtenerDestacados();
   }, []);
 
   return (
     <div>
-      {/* Hero simple */}
+      {/* Sección de bienvenida (Hero) */}
       <section style={{ textAlign:'center', marginBottom:'2rem' }}>
         <h1>🎮 Bienvenido a <span style={{ color:'#00bfff' }}>GameHub</span></h1>
-        <p>Descubre, compara y guarda tus juegos favoritos desde una API real.</p>
+        <p>Descubre, compara y guarda tus juegos favoritos usando datos reales.</p>
       </section>
 
-      {/* Grid de destacados */}
-      <h2>🔥 Juegos Destacados (Top Rated)</h2>
+      {/* Sección de Juegos Destacados */}
+      <h2>🔥 Juegos Destacados (Mejor Valorados)</h2>
       
-      {loading && <p style={{textAlign: 'center'}}>Cargando destacados...</p>}
+      {/* Mensajes de estado */}
+      {cargando && <p style={{textAlign: 'center'}}>Cargando destacados...</p>}
       {error && <p style={{color: 'red', textAlign: 'center'}}>No se pudieron cargar los destacados.</p>}
 
+      {/* Grilla de tarjetas */}
       <section style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(250px,1fr))', gap:20, marginTop:16 }}>
-        {!loading && !error && destacados.map((j) => (
-          <Link key={j.id} to={`/juego/${j.id}`} style={{ textDecoration:'none', color:'inherit' }}>
+        {!cargando && !error && destacados.map((juego) => (
+          <Link key={juego.id} to={`/juego/${juego.id}`} style={{ textDecoration:'none', color:'inherit' }}>
             <Card 
-              title={j.name} 
-              image={j.background_image}
+              title={juego.name} 
+              image={juego.background_image}
             >
-              {/* RAWG no siempre trae descripción en la lista, así que mostramos datos técnicos */}
-              <p style={{opacity:.8, fontSize:14}}>
-                {j.genres?.map(g => g.name).slice(0, 2).join(' • ')} 
+              {/* Mostramos géneros y puntuación porque la descripción suele ser muy larga */}
+              <p style={{opacity:0.8, fontSize:14}}>
+                {juego.genres?.map(g => g.name).slice(0, 2).join(' • ')} 
                 <br/> 
-                ⭐ {j.rating} | Metascore {j.metacritic || 'N/A'}
+                ⭐ {juego.rating} | Metascore {juego.metacritic || 'N/A'}
               </p>
             </Card>
           </Link>
