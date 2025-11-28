@@ -17,7 +17,7 @@ export default function DetalleJuego(){
   const { isFav, toggleFav } = useFavs();
 
   // 🔑 TU CLAVE DE API
-  const API_KEY = "TU_API_KEY_AQUI";
+  const API_KEY = "6a3bd592aa9449448bb1f9a8ef8fd02f";
 
   // --- EFECTO (Carga del juego específico) ---
   // Se ejecuta cuando cambia el 'id' (por ejemplo, si navegamos de un juego a otro).

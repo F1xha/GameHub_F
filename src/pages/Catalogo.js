@@ -33,7 +33,7 @@ export default function Catalogo() {
   const navigate = useNavigate(); // Para cambiar de ruta programáticamente.
 
   // 🔑 TU CLAVE DE API (Esencial para que RAWG nos dé permiso).
-  const API_KEY = "TU_API_KEY_AQUI"; 
+  const API_KEY = "6a3bd592aa9449448bb1f9a8ef8fd02f"; 
 
   // --- EFECTO (Llamada a la API) ---
   // Este bloque se ejecuta automáticamente cuando el componente nace

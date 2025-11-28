@@ -21,7 +21,7 @@ export default function Perfil() {
   const [cargandoFavs, setCargandoFavs] = useState(false);
 
   // 🔑 TU CLAVE DE API
-  const API_KEY = "TU_API_KEY_AQUI";
+  const API_KEY = "6a3bd592aa9449448bb1f9a8ef8fd02f";
 
   // --- EFECTO (Cargar Favoritos) ---
   useEffect(() => {
