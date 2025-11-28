@@ -8,14 +8,14 @@ export default function Inicio() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
 
-  // 🔑 CLAVE DE API (RAWG.io)
-  const API_KEY = "6a3bd592aa9449448bb1f9a8ef8fd02f";
+  // 🔑 TU CLAVE DE API
+  const API_KEY = "TU_API_KEY_AQUI";
 
   useEffect(() => {
     const obtenerDestacados = async () => {
       try {
-        // Solicitamos a la API los 10 juegos mejor valorados (-rating)
-        const url = `https://api.rawg.io/api/games?key=${API_KEY}&page_size=10&ordering=-rating`;
+        // Pedimos los juegos ordenados por rating (-rating = descendente) y limitamos a 3.
+        const url = `https://api.rawg.io/api/games?key=${API_KEY}&page_size=3&ordering=-rating`;
         const respuesta = await fetch(url);
         
         if (!respuesta.ok) {
@@ -23,16 +23,16 @@ export default function Inicio() {
         }
 
         const datos = await respuesta.json();
-        setDestacados(datos.results); // Guardamos los resultados en el estado
+        setDestacados(datos.results); // Guardamos los 3 juegos en el estado.
       } catch (err) {
         setError(err.message);
       } finally {
-        setCargando(false); // Terminamos la carga, haya éxito o error
+        setCargando(false); // Terminamos la carga.
       }
     };
 
     obtenerDestacados();
-  }, []);
+  }, []); // Array vacío [] significa: ejecutar solo una vez al montar el componente.
 
   return (
     <div>
@@ -45,19 +45,20 @@ export default function Inicio() {
       {/* Sección de Juegos Destacados */}
       <h2>🔥 Juegos Destacados (Mejor Valorados)</h2>
       
-      {/* Mensajes de estado */}
+      {/* Mensajes de estado simples */}
       {cargando && <p style={{textAlign: 'center'}}>Cargando destacados...</p>}
       {error && <p style={{color: 'red', textAlign: 'center'}}>No se pudieron cargar los destacados.</p>}
 
       {/* Grilla de tarjetas */}
       <section style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(250px,1fr))', gap:20, marginTop:16 }}>
+        {/* Si no está cargando y no hay error, mostramos (mapeamos) los juegos */}
         {!cargando && !error && destacados.map((juego) => (
           <Link key={juego.id} to={`/juego/${juego.id}`} style={{ textDecoration:'none', color:'inherit' }}>
             <Card 
               title={juego.name} 
               image={juego.background_image}
             >
-              {/* Mostramos géneros y puntuación porque la descripción suele ser muy larga */}
+              {/* Información resumida para la tarjeta de inicio */}
               <p style={{opacity:0.8, fontSize:14}}>
                 {juego.genres?.map(g => g.name).slice(0, 2).join(' • ')} 
                 <br/> 
