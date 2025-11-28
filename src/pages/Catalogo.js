@@ -15,7 +15,7 @@ export default function Catalogo() {
   const { isFav, toggleFav } = useFavs();
   const navigate = useNavigate();
 
-  // 🔑 REEMPLAZA ESTO CON TU CLAVE DE RAWG
+  // 🔑 CLAVE DE API (RAWG.io)
   const API_KEY = "6a3bd592aa9449448bb1f9a8ef8fd02f"; 
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export default function Catalogo() {
         const baseUrl = "https://api.rawg.io/api/games";
         const url = q 
           ? `${baseUrl}?key=${API_KEY}&search=${q}` 
-          : `${baseUrl}?key=${API_KEY}&page_size=20`; // Traemos 20 populares por defecto
+          : `${baseUrl}?key=${API_KEY}&page_size=40`; // Traemos 40 populares por defecto
 
         const response = await fetch(url);
         
