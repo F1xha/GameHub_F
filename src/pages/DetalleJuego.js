@@ -1,19 +1,55 @@
-// pages/DetalleJuego.js
-// Ficha completa de un juego según el :id de la URL
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import juegos from '../data/juegos';
 import { useFavs } from '../utils/favs';
 
 export default function DetalleJuego(){
   const { id } = useParams();
-  // Busca por id o por slug string
-  const juego = juegos.find(j => j.id === id || String(j.id) === String(id));
+  
+  // Estados
+  const [juego, setJuego] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const { isFav, toggleFav } = useFavs();
 
-  if(!juego){
-    return <p>Juego no encontrado. <Link to="/catalogo" style={{color:'#00bfff'}}>Volver</Link></p>;
-  }
+  // 🔑 REEMPLAZA ESTO CON TU CLAVE DE RAWG
+  const API_KEY = "6a3bd592aa9449448bb1f9a8ef8fd02f";
+
+  useEffect(() => {
+    const fetchDetalle = async () => {
+      setLoading(true);
+      try {
+        // Petición al endpoint de detalles de RAWG
+        const response = await fetch(`https://api.rawg.io/api/games/${id}?key=${API_KEY}`);
+        
+        if (!response.ok) {
+          throw new Error('No se pudo encontrar el juego');
+        }
+
+        const data = await response.json();
+        setJuego(data);
+
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDetalle();
+  }, [id]);
+
+  // Renderizado condicional según el estado
+  if (loading) return <div style={{color:'white', padding:20, textAlign:'center'}}><h2>Cargando detalles...</h2></div>;
+  
+  if (error) return (
+    <div style={{color:'#ff7676', padding:20, textAlign:'center'}}>
+      <p>Error: {error}</p>
+      <Link to="/catalogo" style={{color:'#00bfff'}}>Volver al catálogo</Link>
+    </div>
+  );
+
+  if (!juego) return null;
 
   const fav = isFav(juego.id);
 
@@ -23,9 +59,10 @@ export default function DetalleJuego(){
 
       {/* Cabecera */}
       <header style={{textAlign:'center', margin:'12px 0 24px'}}>
-        <h1>{juego.title}</h1>
-        <img src={juego.images.cover} alt={juego.title} style={{ width:'70%', maxWidth:900, borderRadius:10 }}/>
-        {/* Botón favorito */}
+        <h1>{juego.name}</h1>
+        {/* background_image es la imagen principal en RAWG */}
+        <img src={juego.background_image} alt={juego.name} style={{ width:'70%', maxWidth:900, borderRadius:10 }}/>
+        
         <div style={{marginTop:12}}>
           <button
             className="fav-btn"
@@ -37,40 +74,29 @@ export default function DetalleJuego(){
         </div>
       </header>
 
-      {/* Layout 2 columnas: descripción + ficha */}
-      <section style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:24}}>
+      {/* Descripción y Ficha Técnica */}
+      <section style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(300px, 1fr))', gap:24}}>
         {/* Columna izquierda */}
         <div>
           <h2>Descripción</h2>
-          <p>{juego.description}</p>
-
-          <h3>Capturas</h3>
-          <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))', gap:12}}>
-            {juego.images.screenshots?.map((s, i) => (
-              <img key={i} src={s} alt={`${juego.title} screenshot ${i+1}`} style={{width:'100%', borderRadius:8}}/>
-            ))}
-          </div>
+          {/* description_raw viene sin etiquetas HTML */}
+          <p style={{lineHeight: 1.6, whiteSpace: 'pre-wrap'}}>{juego.description_raw || "Sin descripción disponible."}</p>
         </div>
 
-        {/* Columna derecha (ficha) */}
-        <aside>
+        {/* Columna derecha (Ficha adaptada a datos reales) */}
+        <aside style={{background: '#111', padding: 20, borderRadius: 10, height: 'fit-content'}}>
           <h2>Ficha Técnica</h2>
-          <ul style={{lineHeight:1.8}}>
-            <li><strong>Desarrollador:</strong> {juego.developer}</li>
-            <li><strong>Publisher:</strong> {juego.publisher}</li>
-            <li><strong>Lanzamiento:</strong> {juego.releaseDate}</li>
-            <li><strong>Género:</strong> {juego.genre.join(', ')}</li>
-            <li><strong>Plataformas:</strong> {juego.platforms.join(', ')}</li>
-            <li><strong>Clasificación:</strong> {juego.esrb}</li>
-            <li><strong>Metascore:</strong> {juego.metascore}</li>
-            <li><strong>Rating Usuarios:</strong> {juego.rating}</li>
-            <li><strong>Precio referencial:</strong> ${juego.price}</li>
-            {juego.tags?.length ? <li><strong>Tags:</strong> {juego.tags.join(', ')}</li> : null}
+          <ul style={{lineHeight:1.8, listStyle:'none', padding:0}}>
+            <li><strong>Lanzamiento:</strong> {juego.released}</li>
+            <li><strong>Desarrolladores:</strong> {juego.developers?.map(d => d.name).join(', ')}</li>
+            <li><strong>Géneros:</strong> {juego.genres?.map(g => g.name).join(', ')}</li>
+            <li><strong>Plataformas:</strong> {juego.platforms?.map(p => p.platform.name).join(', ')}</li>
+            <li><strong>Metascore:</strong> {juego.metacritic || 'N/A'}</li>
+            <li><strong>Rating:</strong> {juego.rating} / 5</li>
+            {juego.website && (
+               <li><strong>Web oficial:</strong> <a href={juego.website} target="_blank" rel="noreferrer" style={{color:'#00bfff'}}>Visitar</a></li>
+            )}
           </ul>
-
-          <h3>Requisitos (orientativos PC)</h3>
-          <p><strong>Mínimos:</strong> {juego.requirements.minimum}</p>
-          <p><strong>Recomendados:</strong> {juego.requirements.recommended}</p>
         </aside>
       </section>
     </div>
