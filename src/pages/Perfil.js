@@ -6,26 +6,27 @@ import { isAutenticado, getUsuario, login, registrar, logout } from '../utils/au
 import '../styles/auth.css'; 
 
 export default function Perfil() {
-  // Estado de autenticación (Usuario logueado o no)
+  // --- ESTADOS ---
+  // Estado de autenticación: revisa si ya hay un usuario guardado en localStorage.
   const [auth, setAuth] = useState(() => ({ logged: isAutenticado(), usuario: getUsuario() }));
   const [errorAuth, setErrorAuth] = useState('');
   
-  // Estados para los formularios (Login y Registro)
+  // Estados para controlar lo que escribe el usuario en los inputs.
   const [formLogin, setFormLogin] = useState({ email: '', password: '' });
   const [formRegistro, setFormRegistro] = useState({ nombre: '', email: '', password: '' });
 
-  // Estado de Favoritos (Datos traídos de la API)
+  // Favoritos: traemos la lista de IDs del hook y preparamos estado para los datos completos.
   const { favs, isFav, toggleFav, clearFavs } = useFavs();
-  const [datosFavoritos, setDatosFavoritos] = useState([]);
+  const [datosFavoritos, setDatosFavoritos] = useState([]); // Aquí guardaremos los objetos completos de la API.
   const [cargandoFavs, setCargandoFavs] = useState(false);
 
   // 🔑 TU CLAVE DE API
-  const API_KEY = "6a3bd592aa9449448bb1f9a8ef8fd02f";
+  const API_KEY = "TU_API_KEY_AQUI";
 
-  // Efecto: Cargar detalles de cada juego favorito desde la API
+  // --- EFECTO (Cargar Favoritos) ---
   useEffect(() => {
     const obtenerFavoritos = async () => {
-      // Si no hay favoritos guardados, limpiamos la lista y salimos
+      // Si la lista de IDs está vacía, no hay nada que buscar.
       if (favs.length === 0) {
         setDatosFavoritos([]);
         return;
@@ -33,18 +34,20 @@ export default function Perfil() {
 
       setCargandoFavs(true);
       try {
-        // Creamos una lista de promesas (una petición por cada juego favorito)
+        // TÉCNICA AVANZADA: Promise.all
+        // Como tenemos varios IDs (ej: 345, 12, 99), necesitamos hacer un fetch por cada uno.
+        // 'promesas' es un array de peticiones fetch que se inician simultáneamente.
         const promesas = favs.map(id => 
           fetch(`https://api.rawg.io/api/games/${id}?key=${API_KEY}`).then(res => {
             if(res.ok) return res.json();
-            return null; // Si un juego falla, devolvemos null para no romper todo
+            return null; // Si un juego falla individualmente, devolvemos null para no romper todo el proceso.
           })
         );
 
-        // Esperamos a que TODAS las peticiones a la API terminen
+        // 'await Promise.all' espera a que TODAS las peticiones terminen antes de seguir.
         const resultados = await Promise.all(promesas);
         
-        // Filtramos los resultados nulos (por si hubo errores) y guardamos
+        // Filtramos los 'null' (errores) y guardamos los juegos válidos.
         setDatosFavoritos(resultados.filter(juego => juego !== null));
         
       } catch (error) {
@@ -54,17 +57,17 @@ export default function Perfil() {
       }
     };
 
-    // Solo intentamos cargar si el usuario está logueado
+    // Solo ejecutamos esto si el usuario ha iniciado sesión.
     if (auth.logged) {
       obtenerFavoritos();
     }
-  }, [favs, auth.logged]); // Se ejecuta si cambian los favoritos o el estado de login
+  }, [favs, auth.logged]); // Se reactiva si cambia la lista de favoritos o el estado de login.
 
 
-  // --- Manejadores de Eventos (Login, Registro, Salir) ---
+  // --- FUNCIONES DE FORMULARIOS ---
 
   const manejarLogin = (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Evita que la página se recargue al enviar.
     const respuesta = login({ email: formLogin.email, password: formLogin.password });
     if (!respuesta.ok) return setErrorAuth(respuesta.error);
     
@@ -91,11 +94,11 @@ export default function Perfil() {
   const manejarLogout = () => {
     logout();
     setAuth({ logged: false, usuario: null });
-    setDatosFavoritos([]); // Limpiamos la vista al cerrar sesión
+    setDatosFavoritos([]); // Es importante limpiar la vista al salir.
   };
 
 
-  // --- VISTA: Usuario NO Autenticado ---
+  // --- VISTA: Si NO está autenticado, mostramos formularios ---
   if (!auth.logged) {
     return (
       <div>
@@ -160,7 +163,7 @@ export default function Perfil() {
     );
   }
 
-  // --- VISTA: Usuario Autenticado ---
+  // --- VISTA: Si SÍ está autenticado, mostramos perfil y favoritos ---
   return (
     <div>
       <h1>Mi Perfil</h1>
@@ -172,7 +175,7 @@ export default function Perfil() {
 
       <h2 style={{marginTop:12}}>Mis Favoritos (API)</h2>
       
-      {/* Botón para limpiar favoritos */}
+      {/* Botón para borrar todos los favoritos (solo si hay alguno) */}
       {favs.length > 0 && (
         <div style={{marginBottom: 10}}>
             <button className="auth-btn" onClick={clearFavs} style={{background:'#1b1b1b', width:'auto'}}>
@@ -184,7 +187,7 @@ export default function Perfil() {
       {/* Indicador de carga */}
       {cargandoFavs && <p>Cargando tus juegos favoritos desde la nube...</p>}
 
-      {/* Mensaje de lista vacía */}
+      {/* Mensaje si no tiene favoritos */}
       {!cargandoFavs && datosFavoritos.length === 0 && (
         <p style={{marginTop:12}}>
           No tienes favoritos guardados. Ve al <Link to="/catalogo" style={{color:'#00bfff'}}>catálogo</Link> para agregar algunos.
