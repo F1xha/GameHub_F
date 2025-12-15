@@ -14,10 +14,14 @@ export default function DetalleJuego(){
     const fetchDetalle = async () => {
       setLoading(true);
       try {
-        // TU URL DE RENDER
+        // Asegúrate de que esta URL esté bien
         const response = await fetch(`https://api-wikigames.onrender.com/api/juegos/${id}`);
         
-        if (!response.ok) throw new Error('Juego no encontrado');
+        if (!response.ok) {
+            // Intentamos leer el error real del backend si existe
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Juego no encontrado en la API');
+        }
         
         const data = await response.json();
         setJuego(data);
@@ -34,7 +38,7 @@ export default function DetalleJuego(){
   if (loading) return <p style={{color:'white'}}>Cargando...</p>;
   if (error || !juego) return <p style={{color:'red'}}>Error: {error || 'No encontrado'}</p>;
 
-  const fav = isFav(juego.id);
+  const fav = isFav(juego._id);
 
   return (
     <div>
@@ -45,7 +49,7 @@ export default function DetalleJuego(){
         <img src={juego.images?.cover} alt={juego.title} style={{ width:'70%', maxWidth:800, borderRadius:10 }}/>
         
         <div style={{marginTop:12}}>
-          <button className="fav-btn" onClick={() => toggleFav(juego.id)}>
+          <button className="fav-btn" onClick={() => toggleFav(juego._id)}>
             {fav ? '❤️ Quitar' : '🤍 Agregar'}
           </button>
         </div>

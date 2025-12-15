@@ -82,12 +82,15 @@ export default function Catalogo() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(250px,1fr))', gap: 20, marginTop: 20 }}>
         {list.map(j => (
           <Card
-            key={j.id}
-            title={j.title} // Tu API usa 'title', no 'name'
-            image={j.images?.cover} // Tu estructura original
-            fav={isFav(j.id)}
-            onToggleFav={() => toggleFav(j.id)}
-            onClick={() => navigate(`/juego/${j.id}`)}
+            key={j._id}  /* CORREGIDO: Usar _id */
+            title={j.title}
+            image={j.images?.cover}
+            
+            fav={isFav(j._id)} /* CORREGIDO: Usar _id */
+            onToggleFav={() => toggleFav(j._id)} /* CORREGIDO: Usar _id */
+            
+            /* ESTE ES EL CAMBIO MÁS IMPORTANTE PARA LA NAVEGACIÓN: */
+            onClick={() => navigate(`/juego/${j._id}`)} 
           >
             <p><strong>Género:</strong> {j.genre?.join(', ')}</p>
             <p>⭐ {j.rating}</p>
