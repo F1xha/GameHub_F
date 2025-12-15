@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Card from '../components/Card';
 import { useFavs } from '../utils/favs';
 import { isAutenticado, getUsuario, login, registrar, logout } from '../utils/auth';
-import '../styles/auth.css'; 
+import '../Styles/auth.css'; 
 
 export default function Perfil() {
   // --- ESTADOS ---
