@@ -1,7 +1,7 @@
 // components/Card.js
 // Componente reutilizable de tarjeta: imagen + título + contenido + botón favorito opcional
 import React from 'react';
-import '../styles/card.css';
+import '../Styles/card.css';
 
 export default function Card({ title, image, onClick, children, fav, onToggleFav }) {
   return (
