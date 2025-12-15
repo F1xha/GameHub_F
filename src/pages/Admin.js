@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { getJuegos, deleteJuego, createJuego, updateJuego } from '../services/api';
-import { obtenerJuegos, agregarJuego } from '../services/api';
 export default function Admin() {
   const [juegos, setJuegos] = useState([]);
   // 1. Agregamos 'genre' al estado
